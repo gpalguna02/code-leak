@@ -25,6 +25,8 @@ def get_db_connection(db_path: Optional[Path] = None) -> sqlite3.Connection:
 
     if str(target_path) not in _initialized_dbs:
         _ensure_schema(conn)
+        if target_path == SQLITE_DB_PATH.resolve():
+            _seed_initial_audits_if_empty(conn)
         _initialized_dbs.add(str(target_path))
 
     return conn

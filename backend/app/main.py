@@ -165,6 +165,7 @@ def health_check() -> Dict[str, Any]:
 
 
 @app.post("/api/audit")
+@app.post("/api/audits")
 def create_audit(payload: AuditRequest) -> Dict[str, Any]:
     """
     Core security audit pipeline:
