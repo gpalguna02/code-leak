@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AirGap Sentinel - Zero-Exfiltration Local Code Defense</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%3E<text y=%2226%22 font-size=%2224%22>🛡️</text></svg>">
+</head>
+<body>
+
+  <!-- Fixed Glassmorphism Header (Netflix/Prime Style) -->
+  <header class="cine-header" id="main-header">
+    <div class="cine-header-left">
+      <div class="cine-brand" onclick="App.switchTab('catalog')">
+        <div class="cine-logo-icon">🛡️</div>
+        <div class="cine-logo-text">
+          AIRGAP<span class="accent-red">SENTINEL</span>
+          <span class="cine-logo-badge">LOCAL DEFENSE</span>
+        </div>
+      </div>
+
+      <!-- Quick Navigation Links -->
+      <nav class="cine-nav-links">
+        <button class="cine-nav-btn active" data-tab="catalog">
+          <span>🎬</span> Catalog
+        </button>
+        <button class="cine-nav-btn" data-tab="live">
+          <span>⚡</span> Live Screening
+        </button>
+        <button class="cine-nav-btn" data-tab="sandbox">
+          <span>🧪</span> Sandbox
+        </button>
+        <button class="cine-nav-btn" data-tab="policies">
+          <span>📚</span> Vector Policies
+        </button>
+      </nav>
+    </div>
+
+    <!-- Right Header Controls: Consolidated Engine Hub, Download App, User Profile -->
+    <div class="cine-header-right">
+      <!-- Consolidated Core Engines Active Pill with Popover -->
+      <div class="cine-engine-hub" id="engine-hub-pill" tabindex="0" title="Click to view local defense engine status">
+        <div class="engine-hub-trigger" onclick="App.toggleEnginePopover(event)">
+          <span class="pulse-dot online"></span>
+          <span class="engine-hub-label">⚡ Core Engines Active</span>
+          <span class="engine-hub-chevron">▾</span>
+        </div>
+        <div class="engine-hub-popover" id="engine-hub-popover">
+          <div class="engine-popover-header">
+            <span>🛡️ AirGap Sentinel Telemetry</span>
+            <span class="engine-popover-tag">LOCAL ZERO-EXFILTRATION</span>
+          </div>
+          <div class="engine-stat-rows">
+            <div class="engine-stat-item">
+              <span class="pulse-dot online" id="stat-api-dot"></span>
+              <div class="engine-stat-text">
+                <div class="engine-stat-title">FastAPI Backend Daemon</div>
+                <div class="engine-stat-sub" id="stat-api-detail">Port 8001 • Healthy</div>
+              </div>
+            </div>
+            <div class="engine-stat-item">
+              <span class="pulse-dot online" id="stat-db-dot"></span>
+              <div class="engine-stat-text">
+                <div class="engine-stat-title">ChromaDB Vector Store</div>
+                <div class="engine-stat-sub" id="stat-db-detail">8 Security Policies Ready</div>
+              </div>
+            </div>
+            <div class="engine-stat-item">
+              <span class="pulse-dot online" id="stat-ollama-dot"></span>
+              <div class="engine-stat-text">
+                <div class="engine-stat-title">Local LLM Reasoning Engine</div>
+                <div class="engine-stat-sub" id="stat-ollama-detail">Ollama (gemma3:1b) + Heuristic</div>
+              </div>
+            </div>
+          </div>
+          <div class="engine-popover-footer">
+            <span>🔒 All audits remain 100% on localhost. No data ever leaves your device.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Direct Download Web Package Button -->
+      <button class="cine-header-download-btn" onclick="App.openDownloadModal()" title="Download AirGap Sentinel Web App (.zip)">
+        <span>📦</span> Download App
+      </button>
+
+      <!-- User Auth Profile / Login Container -->
+      <div id="header-auth-container" class="cine-auth-profile-wrap">
+        <button class="cine-btn-auth" id="btn-open-login" onclick="App.openLoginModal()">
+          <span>👤</span> Sign In
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Cinematic Billboard / Netflix-Style Hero Spotlight -->
+  <section class="hero-spotlight-banner" id="hero-spotlight-banner">
+    <div class="hero-spotlight-backdrop">
+      <div class="hero-spotlight-glow"></div>
+      <div class="hero-diff-watermark" id="hero-diff-watermark">
++ CLOUD_SECRET_ACCESS_KEY = "[LOCAL-AIRGAP-INTERCEPTED-CREDENTIAL]"
+- query = "SELECT * FROM security_audits WHERE status = 'intercepted'"
++ # AirGap Sentinel Local Defense Enforced: Pre-Commit Blocked
+      </div>
+    </div>
+
+    <div class="hero-spotlight-content">
+      <!-- Left-aligned Metadata Badges -->
+      <div class="hero-meta-pills" id="hero-meta-pills">
+        <span class="hero-pill-badge critical"><span class="pulse-dot offline"></span> CRITICAL RISK</span>
+        <span class="hero-pill-badge cwe">CWE-798</span>
+        <span class="hero-pill-badge blocked">COMMIT BLOCKED</span>
+        <span class="hero-pill-badge engine">🦙 OLLAMA GEMMA3:1B</span>
+      </div>
+
+      <!-- Large Typography Incident Headline -->
+      <h1 class="hero-spotlight-title" id="hero-spotlight-title">
+        CRITICAL EXPOSURE: AWS Root Token Detected in payment.py
+      </h1>
+
+      <!-- 2-Line AI Synopsis -->
+      <p class="hero-spotlight-synopsis" id="hero-spotlight-synopsis">
+        Zero-exfiltration heuristic &amp; Ollama neural scan intercepted an unmasked high-entropy credential in the staged commit payload. Local git push successfully halted.
+      </p>
+
+      <!-- Prominent Call-To-Action Buttons -->
+      <div class="hero-spotlight-actions" id="hero-spotlight-actions">
+        <button class="btn-hero-primary" id="btn-hero-inspect" onclick="App.openHeroAudit()">
+          <span class="hero-btn-icon">▶</span> Inspect Diff
+        </button>
+        <button class="btn-hero-secondary" id="btn-hero-remediate" onclick="App.openHeroRemediation()">
+          <span class="hero-btn-icon">ℹ</span> Remediation Plan
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Netflix-Style Sticky / Expandable Search & Filter Bar -->
+  <section class="cine-search-spotlight">
+    <!-- Centered Omni-Search Box with Expand-on-Focus -->
+    <div class="omni-search-wrapper">
+      <div class="omni-search-box">
+        <span class="search-icon-svg">🔍</span>
+        <input
+          type="text"
+          id="omni-search-input"
+          class="omni-search-input"
+          placeholder="Search commit hash, file (payment.py), secret (AWS, Stripe, JWT), or CWE-89..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button id="search-clear-btn" class="search-clear-btn" title="Clear Search">✕</button>
+        <span class="search-shortcut-badge">/</span>
+      </div>
+
+      <!-- Quick Search Information Hints -->
+      <div class="search-info-hints">
+        <span class="search-hint-label">Quick Queries:</span>
+        <button class="search-hint-pill" onclick="App.setSearchQuery('AWS')">AWS Keys</button>
+        <button class="search-hint-pill" onclick="App.setSearchQuery('CWE-89')">SQLi Injection</button>
+        <button class="search-hint-pill" onclick="App.setSearchQuery('CWE-327')">Broken Crypto</button>
+        <button class="search-hint-pill" onclick="App.setSearchQuery('CWE-22')">Path Traversal</button>
+        <button class="search-hint-pill" onclick="App.setSearchQuery('Stripe')">Stripe Tokens</button>
+        <button class="search-hint-pill" onclick="App.setSearchQuery('BLOCKED')">Blocked Threats</button>
+      </div>
+    </div>
+
+    <!-- Filter Chips / Genres Row -->
+    <div class="cine-filter-chips">
+      <button class="filter-chip active" data-filter="ALL">
+        <span>🍿</span> All Audits
+      </button>
+      <button class="filter-chip" data-filter="BLOCKED">
+        <span>⛔</span> Blocked Threats
+      </button>
+      <button class="filter-chip" data-filter="PASSED">
+        <span>✔</span> Clean Code
+      </button>
+      <button class="filter-chip" data-filter="CRITICAL">
+        <span>🚨</span> Critical Hazards
+      </button>
+      <button class="filter-chip" data-filter="SECRETS">
+        <span>🔑</span> Leaked Secrets
+      </button>
+      <button class="filter-chip" data-filter="SQLI">
+        <span>💉</span> SQL Injections
+      </button>
+      <button class="filter-chip" data-filter="CRYPTO">
+        <span>🔓</span> Broken Crypto
+      </button>
+      <button class="filter-chip" data-filter="TRAVERSAL">
+        <span>📁</span> Path Traversal
+      </button>
+    </div>
+  </section>
+
+  <!-- Main Views Container -->
+  <main class="cine-main">
+
+    <!-- Cinematic Metrics Ribbon -->
+    <section class="metrics-strip">
+      <div class="metric-box">
+        <div class="metric-label">Total Audits</div>
+        <div class="metric-num" id="metric-total-scans">0</div>
+        <div class="metric-sub">Automated &amp; sandbox screenings</div>
+      </div>
+      <div class="metric-box danger">
+        <div class="metric-label">Threats Blocked</div>
+        <div class="metric-num" id="metric-blocked">0</div>
+        <div class="metric-sub">Critical exposures blocked from code push</div>
+      </div>
+      <div class="metric-box warning">
+        <div class="metric-label">Secrets Detected</div>
+        <div class="metric-num" id="metric-secrets">0</div>
+        <div class="metric-sub">API keys, tokens, and private keys</div>
+      </div>
+      <div class="metric-box info">
+        <div class="metric-label">CWE Violations</div>
+        <div class="metric-num" id="metric-vulns">0</div>
+        <div class="metric-sub">SQLi, weak crypto, traversal patterns</div>
+      </div>
+    </section>
+
+    <!-- TAB 1: Streaming-Style Security Audit Rows (Netflix/Prime Carousels) -->
+    <div class="tab-view active" id="view-catalog">
+      
+      <!-- Filtered Results Grid (Visible when searching or non-ALL filter active) -->
+      <div id="catalog-filtered-section" style="display:none;">
+        <div class="section-headline-row">
+          <div class="section-headline">
+            <span id="filtered-section-icon">🔍</span>
+            <span id="filtered-section-title">Search &amp; Filter Results</span>
+            <span class="count-tag" id="filtered-count-badge">0 Results</span>
+          </div>
+          <button class="btn-cine-ghost" onclick="App.clearSearchFilter()" style="font-size:0.78rem; padding:4px 12px;">
+            <span>✕</span> Reset to Carousels
+          </button>
+        </div>
+        <div class="cine-card-grid" id="catalog-filtered-grid">
+          <!-- Rendered dynamically when filtering -->
+        </div>
+      </div>
+
+      <!-- Streaming Categorized Horizontal Rows (Default View) -->
+      <div id="catalog-carousels-container">
+        
+        <!-- ROW 1: 🔥 Critical Blockbusters (Blocked Commits) -->
+        <section class="netflix-row" id="row-blocked">
+          <div class="netflix-row-header">
+            <div class="netflix-row-title-wrap">
+              <span class="netflix-row-icon">🔥</span>
+              <h2 class="netflix-row-title">Critical Blockbusters</h2>
+              <span class="netflix-row-badge blocked">BLOCKED COMMITS</span>
+              <span class="count-tag" id="badge-count-blocked">0</span>
+            </div>
+            <div class="netflix-row-sub">Severe exposures (AWS Keys, SQL Injection, JWT Leaks) intercepted before push</div>
+          </div>
+
+          <div class="netflix-carousel-wrapper">
+            <button class="carousel-nav-btn prev" onclick="App.scrollCarousel('carousel-blocked', -1)" aria-label="Previous">‹</button>
+            <div class="netflix-carousel-track" id="carousel-blocked">
+              <!-- Rendered dynamically by Components.renderMediaCard -->
+            </div>
+            <button class="carousel-nav-btn next" onclick="App.scrollCarousel('carousel-blocked', 1)" aria-label="Next">›</button>
+          </div>
+        </section>
+
+        <!-- ROW 2: ⚡ Live Commit Stream (Recent Audits) -->
+        <section class="netflix-row" id="row-stream">
+          <div class="netflix-row-header">
+            <div class="netflix-row-title-wrap">
+              <span class="netflix-row-icon">⚡</span>
+              <h2 class="netflix-row-title">Live Commit Stream</h2>
+              <span class="netflix-row-badge stream">RECENT AUDITS</span>
+              <span class="count-tag" id="badge-count-stream">0</span>
+            </div>
+            <div class="netflix-row-sub">Real-time local audits from pre-commit hooks and screening sandbox</div>
+          </div>
+
+          <div class="netflix-carousel-wrapper">
+            <button class="carousel-nav-btn prev" onclick="App.scrollCarousel('carousel-stream', -1)" aria-label="Previous">‹</button>
+            <div class="netflix-carousel-track" id="carousel-stream">
+              <!-- Rendered dynamically by Components.renderMediaCard -->
+            </div>
+            <button class="carousel-nav-btn next" onclick="App.scrollCarousel('carousel-stream', 1)" aria-label="Next">›</button>
+          </div>
+        </section>
+
+        <!-- ROW 3: 🛡️ Verified Clean Releases (Passed) -->
+        <section class="netflix-row" id="row-clean">
+          <div class="netflix-row-header">
+            <div class="netflix-row-title-wrap">
+              <span class="netflix-row-icon">🛡️</span>
+              <h2 class="netflix-row-title">Verified Clean Releases</h2>
+              <span class="netflix-row-badge clean">PASSED POLICIES</span>
+              <span class="count-tag" id="badge-count-clean">0</span>
+            </div>
+            <div class="netflix-row-sub">Zero leaks and compliant code ready for production deployment</div>
+          </div>
+
+          <div class="netflix-carousel-wrapper">
+            <button class="carousel-nav-btn prev" onclick="App.scrollCarousel('carousel-clean', -1)" aria-label="Previous">‹</button>
+            <div class="netflix-carousel-track" id="carousel-clean">
+              <!-- Rendered dynamically by Components.renderMediaCard -->
+            </div>
+            <button class="carousel-nav-btn next" onclick="App.scrollCarousel('carousel-clean', 1)" aria-label="Next">›</button>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: Live Screening Room (Active Staged Audit) -->
+    <div class="tab-view" id="view-live">
+      <!-- Big Screen Status Billboard -->
+      <div class="live-screening-banner passed" id="live-screening-banner">
+        <div class="screening-left">
+          <div class="screening-icon-box">🛡️</div>
+          <div>
+            <div class="screening-title">AIRGAP SENTINEL READY</div>
+            <div class="screening-summary">
+              Waiting for pre-commit diff or manual sandbox audit...
+            </div>
+          </div>
+        </div>
+        <div class="screening-right">
+          <span class="badge-risk safe">SAFE</span>
+          <span class="badge-engine">DevSecOps Guard</span>
+        </div>
+      </div>
+
+      <!-- Live Screening Details Grid -->
+      <div class="screening-details-layout">
+        <!-- Left: Secrets and Vulnerabilities -->
+        <div class="left-col">
+          <!-- Detected Secrets Box -->
+          <div class="cine-section-box">
+            <div class="cine-section-header">
+              <div class="cine-section-title">
+                <span>🔑</span> High-Entropy Secrets Detected
+                <span class="count-tag" id="live-secret-count">0</span>
+              </div>
+            </div>
+            <div class="cine-section-body" id="live-secrets-list">
+              <div style="color:var(--text-muted); font-size:0.88rem; padding:12px 0;">No active findings loaded.</div>
+            </div>
+          </div>
+
+          <!-- Detected CWE Violations Box -->
+          <div class="cine-section-box">
+            <div class="cine-section-header">
+              <div class="cine-section-title">
+                <span>⚠️</span> CWE Vulnerability Violations
+                <span class="count-tag" id="live-vuln-count">0</span>
+              </div>
+            </div>
+            <div class="cine-section-body" id="live-vulns-list">
+              <div style="color:var(--text-muted); font-size:0.88rem; padding:12px 0;">No active findings loaded.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Remediation Checklist and Vector Policies -->
+        <div class="right-col">
+          <!-- Actionable Remediation Checklist -->
+          <div class="cine-section-box">
+            <div class="cine-section-header">
+              <div class="cine-section-title">
+                <span>✅</span> Actionable Defense Checklist
+              </div>
+            </div>
+            <div class="cine-section-body" id="live-checklist-container">
+              <div style="color:var(--text-muted); font-size:0.88rem;">No remediation tasks required.</div>
+            </div>
+          </div>
+
+          <!-- Retrieved ChromaDB Policies -->
+          <div class="cine-section-box">
+            <div class="cine-section-header">
+              <div class="cine-section-title">
+                <span>🧠</span> Retrieved CWE Policies (Vector RAG)
+              </div>
+            </div>
+            <div class="cine-section-body" id="live-policies-list">
+              <div style="color:var(--text-muted); font-size:0.88rem;">No matching policies retrieved.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: Code Screening Studio (Manual Sandbox) -->
+    <div class="tab-view" id="view-sandbox">
+      <div class="sandbox-studio-wrap">
+        <div style="margin-bottom:14px; font-size:0.82rem; text-transform:uppercase; font-weight:800; color:var(--text-muted); letter-spacing:0.06em;">
+          Select Attack Scenario To Screen:
+        </div>
+        <div class="scenario-chips-row">
+          <button class="scenario-pill-btn" data-sample="aws_secret">
+            <span>🚨</span> AWS Access Key &amp; Secret
+          </button>
+          <button class="scenario-pill-btn" data-sample="sql_injection">
+            <span>💉</span> CWE-89: Dynamic SQL Injection
+          </button>
+          <button class="scenario-pill-btn" data-sample="broken_crypto">
+            <span>🔓</span> CWE-327: Broken Crypto (MD5)
+          </button>
+          <button class="scenario-pill-btn" data-sample="path_traversal">
+            <span>📁</span> CWE-22: Path Traversal
+          </button>
+          <button class="scenario-pill-btn" data-sample="clean_code">
+            <span>✨</span> Clean Production Code
+          </button>
+        </div>
+
+        <div class="studio-editor-shell">
+          <div class="studio-topbar">
+            <div style="display:flex; gap:6px;">
+              <span style="width:10px; height:10px; border-radius:50%; background:#ef4444; display:inline-block;"></span>
+              <span style="width:10px; height:10px; border-radius:50%; background:#eab308; display:inline-block;"></span>
+              <span style="width:10px; height:10px; border-radius:50%; background:#10b981; display:inline-block;"></span>
+            </div>
+            <div>screening_studio.diff — UTF-8</div>
+            <div id="editor-char-counter">0 lines, 0 chars</div>
+          </div>
+          <textarea
+            id="sandbox-code-input"
+            class="studio-editor-area"
+            placeholder="Paste unified git diff (e.g. output from 'git diff --cached') or raw Python / JavaScript / Go code here to test local audit..."
+          ></textarea>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:22px;">
+          <button class="btn-cine-ghost" id="btn-clear-sandbox">
+            <span>🗑️</span> Clear Editor
+          </button>
+          <button class="btn-cine-primary" id="btn-run-audit">
+            <span>⚡</span> Run AirGap Audit
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: Vector Policy Knowledge -->
+    <div class="tab-view" id="view-policies">
+      <div style="margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap;">
+        <div>
+          <h2 style="font-size:1.4rem; font-weight:900; color:var(--text-pure);">ChromaDB Security Vector Store</h2>
+          <div style="font-size:0.85rem; color:var(--text-muted);">
+            Pre-seeded CWE standards and corporate DevSecOps compliance rules indexed locally in <code>backend/data/chroma_db</code>.
+          </div>
+        </div>
+        <input
+          type="text"
+          id="policy-search-input"
+          class="omni-search-input"
+          placeholder="Filter policies by CWE ID, keyword..."
+          style="background:rgba(18,22,31,0.8); border:1px solid var(--border-glass); border-radius:9999px; padding:8px 18px; width:300px; font-size:0.85rem;"
+        />
+      </div>
+
+      <div id="policies-grid-container">
+        <div style="color:var(--text-muted); padding:32px;">Loading policies from ChromaDB vector store...</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Cinematic Title Inspection Modal / Drawer -->
+  <div class="cine-modal-overlay" id="cine-audit-modal">
+    <div class="cine-modal-card">
+      <div class="cine-modal-header">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span style="font-size:1.5rem;">🛡️</span>
+          <h3 style="font-size:1.2rem; font-weight:900; color:var(--text-pure);">Security Audit Report</h3>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="report-download-btn-group" id="modal-report-download-group">
+            <!-- Dynamically populated report download links -->
+          </div>
+          <button class="close-btn" id="modal-close-btn">&times;</button>
+        </div>
+      </div>
+      <div class="cine-modal-body" id="modal-detail-body">
+        <!-- Rendered dynamically by Components.openModal -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Cinematic Authentication & Login Modal (Using Our Own Email) -->
+  <div class="cine-modal-overlay" id="cine-auth-modal">
+    <div class="cine-modal-card auth-modal-card">
+      <div class="cine-modal-header">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="cine-logo-icon" style="width:36px; height:36px; font-size:18px;">🛡️</div>
+          <div>
+            <h3 style="font-size:1.2rem; font-weight:900; color:var(--text-pure);">Security Auditor Login</h3>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin:0;">Authenticate using your developer or company email</p>
+          </div>
+        </div>
+        <button class="close-btn" onclick="App.closeLoginModal()">&times;</button>
+      </div>
+
+      <div class="cine-modal-body" style="padding: 24px 28px;">
+        <!-- Error / Status Notice -->
+        <div id="auth-status-alert" class="auth-status-alert" style="display:none;"></div>
+
+        <form id="auth-login-form" onsubmit="App.handleLoginSubmit(event)">
+          <!-- Email Input Field -->
+          <div class="auth-form-group">
+            <label class="auth-form-label" for="auth-email-input">
+              <span>✉️</span> Your Email Address
+            </label>
+            <div class="auth-input-wrapper">
+              <input
+                type="email"
+                id="auth-email-input"
+                class="auth-text-input"
+                placeholder="e.g. palgu@company.com or dev@local.secops"
+                required
+                autocomplete="email"
+                spellcheck="false"
+              />
+            </div>
+            <div class="auth-email-presets">
+              <span style="font-size:0.72rem; color:var(--text-muted);">Quick fill:</span>
+              <button type="button" class="email-preset-chip" onclick="App.setEmailPreset('palgunan@company.local')">palgunan@company.local</button>
+              <button type="button" class="email-preset-chip" onclick="App.setEmailPreset('secops-lead@enterprise.dev')">secops-lead@enterprise.dev</button>
+              <button type="button" class="email-preset-chip" onclick="App.setEmailPreset('auditor@airgap.internal')">auditor@airgap.internal</button>
+            </div>
+          </div>
+
+          <!-- Password / Access PIN -->
+          <div class="auth-form-group">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <label class="auth-form-label" for="auth-password-input" style="margin-bottom:0;">
+                <span>🔒</span> Password / Access PIN
+              </label>
+              <span style="font-size:0.72rem; color:var(--text-muted);">Optional for instant local login</span>
+            </div>
+            <div class="auth-input-wrapper">
+              <input
+                type="password"
+                id="auth-password-input"
+                class="auth-text-input"
+                placeholder="Enter password or leave blank for instant login"
+                autocomplete="current-password"
+              />
+              <button type="button" class="password-toggle-btn" onclick="App.togglePasswordVisibility()" title="Show/Hide Password">
+                👁️
+              </button>
+            </div>
+          </div>
+
+          <!-- Auditor Role Selection -->
+          <div class="auth-form-group">
+            <label class="auth-form-label" for="auth-role-select">
+              <span>🎖️</span> Auditor Role &amp; Clearance
+            </label>
+            <select id="auth-role-select" class="auth-select-input">
+              <option value="Lead DevSecOps Auditor">Lead DevSecOps Auditor (Full Clearance)</option>
+              <option value="Senior Security Engineer">Senior Security Engineer</option>
+              <option value="CI/CD Release Officer">CI/CD Release Officer</option>
+              <option value="Software Developer">Software Developer</option>
+            </select>
+          </div>
+
+          <!-- Remember Me Checkbox -->
+          <div class="auth-remember-row">
+            <label class="auth-checkbox-label">
+              <input type="checkbox" id="auth-remember-me" checked />
+              <span>Remember session on this device</span>
+            </label>
+            <span style="font-size:0.72rem; color:var(--cine-emerald); display:inline-flex; align-items:center; gap:4px;">
+              <span class="pulse-dot online" style="width:6px; height:6px;"></span> Zero-Exfiltration Safe
+            </span>
+          </div>
+
+          <!-- Submit Button -->
+          <div style="margin-top:20px;">
+            <button type="submit" id="btn-submit-login" class="btn-cine-primary" style="width:100%; justify-content:center; padding:12px; font-size:0.95rem;">
+              <span>⚡</span> Sign In with Your Email
+            </button>
+          </div>
+        </form>
+
+        <div class="auth-footer-note">
+          <span>🔒 Local Authentication: All credentials &amp; session profiles are strictly stored in local SQLite database (<code>backend/data/audits.db</code>). No external servers are ever contacted.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Download Center Modal -->
+  <div class="cine-modal-overlay" id="cine-download-modal">
+    <div class="cine-modal-card download-modal-card">
+      <div class="cine-modal-header">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span style="font-size:1.6rem;">📥</span>
+          <div>
+            <h3 style="font-size:1.25rem; font-weight:900; color:var(--text-pure);">Download Center</h3>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin:0;">Download complete project archive, developer hooks, or audit exports</p>
+          </div>
+        </div>
+        <button class="close-btn" onclick="App.closeDownloadModal()">&times;</button>
+      </div>
+      <div class="cine-modal-body" style="padding:24px 28px;">
+        <div class="download-grid">
+          <!-- Card 1: Full Web App & Project ZIP -->
+          <div class="download-card highlight-card">
+            <div class="download-card-badge">RECOMMENDED</div>
+            <div class="download-card-icon">📦</div>
+            <div class="download-card-info">
+              <h4 class="download-card-title">AirGap Sentinel Web App (.zip)</h4>
+              <p class="download-card-desc">Complete standalone package: Cinejoy dark-mode frontend, FastAPI backend, local ChromaDB vector store, test suite, and policy database.</p>
+              <div class="download-card-meta">Format: .ZIP • Complete codebase • Zero external dependencies</div>
+            </div>
+            <a id="link-download-project-zip" href="http://127.0.0.1:8001/api/download/project-zip" download="airgap-sentinel.zip" class="btn-download-action primary">
+              <span>⚡</span> Download Web App (.zip)
+            </a>
+          </div>
+
+          <!-- Card 2: Complete Audit History CSV -->
+          <div class="download-card">
+            <div class="download-card-icon">📊</div>
+            <div class="download-card-info">
+              <h4 class="download-card-title">Audit History Export (.csv)</h4>
+              <p class="download-card-desc">Complete database log of all historical security screenings, blocked threats, entropy scores, and CWE violations in CSV spreadsheet format.</p>
+              <div class="download-card-meta">Format: .CSV • Spreadsheet compatible (Excel / Sheets)</div>
+            </div>
+            <a id="link-download-history-csv" href="http://127.0.0.1:8001/api/download/history-csv" download="airgap_audit_history.csv" class="btn-download-action secondary">
+              <span>📊</span> Download CSV
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Scripts -->
+  <script src="js/components.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

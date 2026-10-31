@@ -1,0 +1,17 @@
+# Python & Test artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Local database and vector storage data
+*.db
+*.db-journal
+
+# Local Environment Secrets
+.env
+.env.*
+*.pem
+*.key
+

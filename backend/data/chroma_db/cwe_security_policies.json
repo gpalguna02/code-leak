@@ -1,0 +1,81 @@
+{
+  "name": "cwe_security_policies",
+  "ids": [
+    "CWE-798",
+    "CWE-89",
+    "CWE-327",
+    "CWE-22",
+    "CWE-312",
+    "POL-SEC-01",
+    "POL-SEC-02",
+    "POL-SEC-03"
+  ],
+  "documents": {
+    "CWE-798": "CWE-798 Use of Hard-coded Credentials: The software contains hard-coded credentials, such as an API key, private key, token, or database password. Exposed keys in source control can be extracted by attackers and used to compromise infrastructure. Remediation: Invalidate and rotate the exposed credential immediately. Store secrets in environment variables (.env excluded via .gitignore) or local/cloud secrets managers (AWS Secrets Manager, HashiCorp Vault). Use git-filter-repo to purge keys from Git history.",
+    "CWE-89": "CWE-89 SQL Injection: Untrusted user input is directly concatenated, formatted, or interpolated into a database query string before execution. Attackers can bypass authentication, view private records, or drop entire database tables. Remediation: Always use parameterized queries (prepared statements) or ORM parameter binding. Never construct SQL via f-strings or '+' string concatenation.",
+    "CWE-327": "CWE-327 Broken or Risky Cryptographic Algorithm: The application utilizes deprecated or weak algorithms such as MD5, SHA-1, DES, RC4, or ECB block cipher mode. These algorithms possess known cryptographic weaknesses, collision attacks, and can be broken with minimal compute. Remediation: Upgrade hashing algorithms to SHA-256 / SHA-3 for digest integrity, Argon2id/bcrypt for password hashing, and AES-GCM (256-bit) with authenticated encryption for symmetric data.",
+    "CWE-22": "CWE-22 Path Traversal: The application constructs file paths using external input without verifying that the path resolves within the intended directory. Attackers can provide '../' sequences to read or overwrite sensitive system files like /etc/passwd or application source files. Remediation: Normalize path using os.path.abspath and verify with os.path.commonpath that the resulting canonical path starts with the trusted root folder.",
+    "CWE-312": "CWE-312 Cleartext Storage / Transmission: Confidential data such as passwords, access tokens, API keys, or PII are stored or transmitted in plaintext (e.g., printed in application logs, transmitted over unencrypted HTTP, or saved in unencrypted config files). Remediation: Implement automatic log masking for authentication tokens and credentials. Enforce TLS 1.3 for all transport and encrypt sensitive database columns at rest.",
+    "POL-SEC-01": "Internal DevSecOps Policy POL-SEC-01: No plaintext credentials, private keys, cloud tokens, or API secrets are permitted in any Git branch. Pre-commit hooks must block commits containing high-entropy keys. CI/CD pipelines must immediately fail builds upon detection of credentials.",
+    "POL-SEC-02": "Internal DevSecOps Policy POL-SEC-02: Legacy cryptographic algorithms (MD5, SHA-1, DES, RC4) are prohibited in production systems. All cryptographic operations must use approved algorithms: SHA-256, AES-256-GCM, or Ed25519.",
+    "POL-SEC-03": "Internal DevSecOps Policy POL-SEC-03: Direct SQL string concatenation and dynamic string interpolation are forbidden across all database drivers. All database operations must enforce bind parameters."
+  },
+  "metadatas": {
+    "CWE-798": {
+      "title": "CWE-798: Use of Hard-coded Credentials",
+      "cwe_id": "CWE-798",
+      "category": "CWE",
+      "severity": "CRITICAL",
+      "remediation_checklist": "[\"Immediately revoke/rotate the compromised secret in provider dashboard (AWS, GitHub, Stripe).\", \"Migrate credential to local environment variables (.env) or Vault secrets manager.\", \"Verify .gitignore includes .env, *.pem, and local credentials files.\", \"Run git-filter-repo or git-rebase to purge secret commit from git history.\"]"
+    },
+    "CWE-89": {
+      "title": "CWE-89: SQL Injection",
+      "cwe_id": "CWE-89",
+      "category": "CWE",
+      "severity": "CRITICAL",
+      "remediation_checklist": "[\"Refactor raw SQL strings to use parameterized query placeholders (%s or ?).\", \"Ensure user inputs are never formatted directly into SQL query templates.\", \"Use ORM query builders (e.g. SQLAlchemy, Prisma) with native parameter sanitization.\", \"Conduct automated SQL injection vulnerability test before merge.\"]"
+    },
+    "CWE-327": {
+      "title": "CWE-327: Use of a Broken or Risky Cryptographic Algorithm",
+      "cwe_id": "CWE-327",
+      "category": "CWE",
+      "severity": "HIGH",
+      "remediation_checklist": "[\"Replace hashlib.md5 and hashlib.sha1 with hashlib.sha256 or hashlib.sha3_256.\", \"Use Argon2id or bcrypt with high work factor for user password storage.\", \"Replace ECB cipher mode with authenticated Galois/Counter Mode (AES-GCM).\", \"Audit all cryptographic primitives against modern NIST SP 800-131A standards.\"]"
+    },
+    "CWE-22": {
+      "title": "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+      "cwe_id": "CWE-22",
+      "category": "CWE",
+      "severity": "CRITICAL",
+      "remediation_checklist": "[\"Resolve canonical path using os.path.realpath / os.path.abspath.\", \"Verify that target file path starts strictly with the designated storage root folder.\", \"Reject user-supplied path strings containing '..' or directory separators.\", \"Consider mapping user input to an internal UUID or whitelist instead of raw filenames.\"]"
+    },
+    "CWE-312": {
+      "title": "CWE-312: Cleartext Storage of Sensitive Information",
+      "cwe_id": "CWE-312",
+      "category": "CWE",
+      "severity": "HIGH",
+      "remediation_checklist": "[\"Add filter to logging pipeline to mask authorization tokens and passwords before printing.\", \"Ensure sensitive URLs use HTTPS with strict transport security (HSTS).\", \"Store sensitive configurations encrypted at rest using local secret stores.\", \"Conduct review of all print/console.log statements in production code.\"]"
+    },
+    "POL-SEC-01": {
+      "title": "POL-SEC-01: Zero Credential Commit Policy",
+      "cwe_id": "CWE-798",
+      "category": "COMPANY_POLICY",
+      "severity": "CRITICAL",
+      "remediation_checklist": "[\"Ensure pre-commit scanner is installed and active in local repo.\", \"Adopt central secret manager for development and production environments.\"]"
+    },
+    "POL-SEC-02": {
+      "title": "POL-SEC-02: Cryptographic Standards Policy",
+      "cwe_id": "CWE-327",
+      "category": "COMPANY_POLICY",
+      "severity": "HIGH",
+      "remediation_checklist": "[\"Verify all crypto operations conform to POL-SEC-02 approved algorithm matrix.\"]"
+    },
+    "POL-SEC-03": {
+      "title": "POL-SEC-03: Parameterized SQL & Safe Data Access Policy",
+      "cwe_id": "CWE-89",
+      "category": "COMPANY_POLICY",
+      "severity": "CRITICAL",
+      "remediation_checklist": "[\"Run static code analysis to verify 100% prepared query compliance.\"]"
+    }
+  }
+}
