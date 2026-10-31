@@ -366,9 +366,19 @@ const App = {
     const ollamaDetail = document.getElementById('stat-ollama-detail');
 
     if (data) {
-      const portStr = this.apiBase.split(':').pop();
+      let portDesc = 'Cloud Serverless';
+      try {
+        if (this.apiBase) {
+          const parsedUrl = new URL(this.apiBase);
+          portDesc = parsedUrl.port ? `Port ${parsedUrl.port}` : parsedUrl.hostname;
+        } else {
+          portDesc = window.location.port ? `Port ${window.location.port}` : 'Cloud Edge';
+        }
+      } catch (e) {
+        portDesc = this.apiBase || 'Connected';
+      }
       if (apiDot) apiDot.className = 'pulse-dot online';
-      if (apiDetail) apiDetail.textContent = `Port ${portStr} • Connected & Healthy`;
+      if (apiDetail) apiDetail.textContent = `${portDesc} • Connected & Healthy`;
 
       if (dbDot) dbDot.className = 'pulse-dot online';
       if (dbDetail) dbDetail.textContent = `${data.chroma_db?.indexed_policies || 8} Security Policies Ready`;

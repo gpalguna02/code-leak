@@ -130,6 +130,19 @@ def logout() -> Dict[str, str]:
     return {"status": "logged_out"}
 
 
+@app.get("/api")
+@app.get("/api/")
+def api_root() -> Dict[str, Any]:
+    """Service discovery and root metadata endpoint."""
+    return {
+        "service": "AirGap Sentinel API",
+        "tagline": "Zero-Exfiltration Local Code Defense",
+        "status": "online",
+        "version": "1.0.0",
+        "health": "/api/health",
+        "docs": "/docs",
+    }
+
 
 @app.get("/api/health")
 def health_check() -> Dict[str, Any]:
